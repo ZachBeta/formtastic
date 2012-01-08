@@ -54,7 +54,11 @@ module Formtastic
         def input_index
           # Try to get parent builder's @nested_child_index Hash, which contains the current
           # index of the form element we want to look up. Fall back on empty Hash otherwise.
-          parent = builder.parent_builder
+          if builder.respond_to?(:parent_builder)
+            parent = builder.parent_builder # Rails >= 3.1
+          else
+            parent = builder.options[:parent_builder] # Rails 3.0
+          end
           duck = parent ? parent.instance_variable_get('@nested_child_index') : {}
           
           # Strip the index from the @nested_child_index, e.g.:
